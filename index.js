@@ -1,8 +1,13 @@
 import express from 'express'
-import db from './mongodb/DBConnection.js'
+import DBConnection from './mongodb/DBConnection.js'
+import Activity from './models/activityModel.js'
+import Category from './models/categoryModel.js'
 
-const admin = db.model('activities')
-const row = admin.find({ name: '准时达' })
+const row = Category.find({
+  id: 207
+}, function (err, data) {
+  console.log(data)
+})
 
 const app = express()
 
@@ -11,6 +16,6 @@ app.get('/', function (req, res) {
 })
 
 app.listen(3000, function () {
-  console.log(row)
+  console.log('row----------------', row)
   console.log('server is running on localhost:3000, develop by aliao')
 })

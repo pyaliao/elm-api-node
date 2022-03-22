@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index"
+    "start": "nodemon index"
   },
   "keywords": [],
   "author": "aliao",
@@ -15,7 +15,8 @@
     "mongoose": "^6.2.7"
   },
   "devDependencies": {
-    "chalk": "^5.0.1"
+    "chalk": "^5.0.1",
+    "nodemon": "^2.0.15"
   },
   "type": "module"
 }
