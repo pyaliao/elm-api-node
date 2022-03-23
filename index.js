@@ -2,13 +2,14 @@ import express from 'express'
 import DBConnection from './mongodb/DBConnection.js'
 import Activity from './models/activityModel.js'
 import Category from './models/categoryModel.js'
+import chalk from 'chalk'
 
 const row = Category.find({
   id: 207
 }, function (err, data) {
+  if (err) return console.log(chalk.red(err))
   console.log(data)
 })
-
 const app = express()
 
 app.get('/', function (req, res) {
