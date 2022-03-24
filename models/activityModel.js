@@ -16,16 +16,15 @@ const activitySchema = new Schema({
 // 创建model
 const Activity = mongoose.model('Activity', activitySchema)
 
-// 如果Activity为空，则将初始化数据添加到activity集合
+// 如果数据库中activities集合为空，则将初始化数据写入activities集合中
 Activity.findOne((err, data) => {
-  // err也为null
+  // 正常情况下err为null
+  if (err) return console.log(chalk.red('activities集合读取错误：' + err))
   // 如果没有数据（collection为空），data值为null
   if (!data) {
-    activityData.forEach((item) => {
-      Activity.create(item, (err, small) => {
-        if (err) return console.log(chalk.red(err))
-        console.log(small)
-      })
+    Activity.create(activityData, (err, small) => {
+      if (err) return console.log(chalk.red(err))
+      console.log(small)
     })
   }
 })

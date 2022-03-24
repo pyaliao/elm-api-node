@@ -1,5 +1,7 @@
-import chalk from "chalk"
-import mongoose from "mongoose"
+'use strict'
+
+import chalk from 'chalk'
+import mongoose from 'mongoose'
 import categoryData from '../initData/category.js'
 
 const Schema = mongoose.Schema
@@ -17,7 +19,7 @@ const categorySchema = new Schema({
     count: Number,
     imgUrl: String,
     level: Number,
-    name: String,
+    name: String
   }]
 })
 // 给Schema添加方法，加在 schema methods 属性的函数会编译到 Model 的 prototype，
@@ -29,7 +31,7 @@ categorySchema.methods.addCategory = async function (type) {
     const subCate = await this.findOne({ name: categoryName[0] })
     allCate.count++
     subCate.count++
-    subCate.subCategoryList.map(item => {
+    subCate.subCategoryList.forEach(item => {
       if (item.name === categoryName[1]) {
         item.count++
       }
@@ -46,13 +48,11 @@ categorySchema.methods.addCategory = async function (type) {
 // 创建model
 const Category = mongoose.model('Category', categorySchema)
 
-// 如过Category集合为空，则将初始化数据添加到Category集合
+// 如过数据库中categories集合为空，则将初始化数据写入categories集合
 Category.findOne((err, data) => {
-  if (err) return console.log(chalk.red(err))
+  if (err) return console.log(chalk.red('categories集合读取错误：' + err))
   if (!data) {
-    categoryData.forEach((item) => {
-      Category.create(item)
-    })
+    Category.create(categoryData)
   }
 })
 export default Category
