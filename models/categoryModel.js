@@ -22,9 +22,9 @@ const categorySchema = new Schema({
     name: String
   }]
 })
-// 给Schema添加方法，加在 schema methods 属性的函数会编译到 Model 的 prototype，
-// 因此此方法最终会成为model实例的方法
-categorySchema.methods.addCategory = async function (type) {
+// 给Schema添加静态方法，静态方法model可以直接调用
+// 实例方法，则只能model实例调用
+categorySchema.statics.addCategory = async function (type) {
   const categoryName = type.split('/')
   try {
     const allCate = await this.findOne()

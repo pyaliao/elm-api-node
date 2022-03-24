@@ -5,12 +5,12 @@ import chalk from 'chalk'
 // 保存Schema构造器函数
 const Schema = mongoose.Schema
 
-// 创建Schema实例
+// 创建Schema
 const explainSchema = new Schema({
   data: Schema.Types.Mixed
 })
 
-// 创建model实例
+// 创建model
 const Explain = mongoose.model('Explain', explainSchema)
 
 // 如果explains集合不存在或者没有数据，则将初始化数据写入explains集合

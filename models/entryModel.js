@@ -5,7 +5,7 @@ import chalk from 'chalk'
 // 保存Schema构造函数
 const Schema = mongoose.Schema
 
-// 创建Schema实例
+// 创建Schema
 const entrySchema = new Schema({
   id: Number,
   isInServing: Boolean,
@@ -17,7 +17,7 @@ const entrySchema = new Schema({
   titleColor: String
 })
 
-// 创建model实例
+// 创建model
 const Entry = mongoose.model('Entry', entrySchema)
 
 // 如果entries集合为空，则将初始化数据写入entries集合

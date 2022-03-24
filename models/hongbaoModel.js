@@ -5,7 +5,7 @@ import chalk from 'chalk'
 // 保存Schema构造函数
 const Schema = mongoose.Schema
 
-// 创建Schema实例
+// 创建Schema
 const hongbaoSchema = new Schema({
   id: Number,
   sn: String,
@@ -23,15 +23,14 @@ const hongbaoSchema = new Schema({
     validityPeriods: String,
     sumCondition: String
   },
-  limitMap: {
-  },
+  limitMap: {},
   status: Number,
   presentStatus: Number,
   shareStatus: Number,
   schema: String
 })
 
-// 创建model实例
+// 创建model
 const Hongbao = mongoose.model('Hongbao', hongbaoSchema)
 
 // 如果hongbaos集合中没有数据，则将初始化数据写入hongbaos集合

@@ -7,6 +7,8 @@ import Entry from './models/entryModel.js'
 import Explian from './models/explainModel.js'
 import Hongbao from './models/hongbaoModel.js'
 import Payment from './models/paymentModel.js'
+import Rate from './models/rateModel.js'
+import Remark from './models/remarkModel.js'
 import chalk from 'chalk'
 
 const app = express()

@@ -5,7 +5,7 @@ import chalk from 'chalk'
 // 保存Schema构造器函数
 const Schema = mongoose.Schema
 
-// 创建Schema实例
+// 创建Schema
 const paymentSchema = new Schema({
   description: String,
   disabledReason: String,
@@ -16,7 +16,7 @@ const paymentSchema = new Schema({
   selectState: Number
 })
 
-// 创建model实例
+// 创建model
 const Payment = mongoose.model('Payment', paymentSchema)
 
 // 如果payments集合中没有数据，则将初始化数据写入payments集合

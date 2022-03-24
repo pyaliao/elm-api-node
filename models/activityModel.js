@@ -13,6 +13,10 @@ const activitySchema = new Schema({
   iconName: String,
   rankingWeight: Number
 })
+
+// 给activitySchema定义索引
+activitySchema.index({ index: 1 });
+
 // 创建model
 const Activity = mongoose.model('Activity', activitySchema)
 
