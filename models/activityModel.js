@@ -15,7 +15,7 @@ const activitySchema = new Schema({
 })
 
 // 给activitySchema定义索引
-activitySchema.index({ index: 1 });
+activitySchema.index({ index: 1 })
 
 // 创建model
 const Activity = mongoose.model('Activity', activitySchema)

@@ -153,17 +153,17 @@
 // Promise.prototype.catch()
 // 1. Promise.prototype.catch()是.then(null, rejection)或者.then(undefined, rejection)的别名
 // 示例：1
-p.then((val) => console.log('fulfilled:', val))
-  .catch((err) => console.log('rejected', err))
-// 等同于
-p.then((val) => console.log('fulfilled:', val))
-  .then(null, (err) => console.log("rejected:", err))
+// p.then((val) => console.log('fulfilled:', val))
+//   .catch((err) => console.log('rejected', err))
+// // 等同于
+// p.then((val) => console.log('fulfilled:', val))
+//   .then(null, (err) => console.log("rejected:", err))
 
-getJson('/post').then(val => {
-  console.log(val)
-}).catch(err => {
-  console.log(err)
-})
+// getJson('/post').then(val => {
+//   console.log(val)
+// }).catch(err => {
+//   console.log(err)
+// })
 // getJSON()方法返回一个 Promise 对象，
 // 1. 如果该对象状态变为resolved，则会调用then()方法指定的回调函数；
 // 2. 如果异步操作抛出错误，状态就会变为rejected，就会调用catch()方法指定的回调函数，处理这个错误。另外，then()方法指定的回调函数，
@@ -171,53 +171,71 @@ getJson('/post').then(val => {
 
 // 示例：2
 // 写法一
-const promise = new Promise(function (resolve, reject) {
-  throw new Error('test')
-})
-promise.catch(function (error) {
-  console.log(error)
-})
+// const promise = new Promise(function (resolve, reject) {
+//   throw new Error('test')
+// })
+// promise.catch(function (error) {
+//   console.log(error)
+// })
 
 // 写法二
-const promise = new Promise(function (resolve, reject) {
-  try {
-    throw new Error('test');
-  } catch (e) {
-    reject(e)
-  }
-})
-promise.catch(function (error) {
-  console.log(error)
-})
-// 写法三
-const promise = new Promise(function (resolve, reject) {
-  reject(new Error('test'))
-})
-promise.catch(function (error) {
-  console.log(error)
-})
+// const promise = new Promise(function (resolve, reject) {
+//   try {
+//     throw new Error('test');
+//   } catch (e) {
+//     reject(e)
+//   }
+// })
+// promise.catch(function (error) {
+//   console.log(error)
+// })
+// // 写法三
+// const promise = new Promise(function (resolve, reject) {
+//   reject(new Error('test'))
+// })
+// promise.catch(function (error) {
+//   console.log(error)
+// })
 // 输出：Error: test
 // 这三种写法等价，比较上面几种写法，可以发现reject()方法的作用，等同于抛出错误
 
 // 示例3：
-const promise = new Promise(function (resolve, reject) {
-  resolve('ok');
-  throw new Error('test'); // 此代码会被执行，但不会被捕获
-});
-promise
-  .then(function (value) { console.log(value) })
-  .catch(function (error) { console.log(error) });
+// const promise = new Promise(function (resolve, reject) {
+//   resolve('ok');
+//   throw new Error('test'); // 此代码会被执行，但不会被捕获
+// });
+// promise
+//   .then(function (value) { console.log(value) })
+//   .catch(function (error) { console.log(error) });
 // 输出：ok
 // 解析：当resolve之后，状态改变为fulfilled，此时状态就会固定，不会再改变了
 // 因此，在resolve后面抛出错误，不会被捕获，等同于没有抛出
 
 // 示例4
-getJSON('/post/1.json').then(function (post) {
-  return getJSON(post.commentURL);
-}).then(function (comments) {
-  // some code
-}).catch(function (error) {
-  // 处理前面三个Promise产生的错误
-});
+// getJSON('/post/1.json').then(function (post) {
+//   return getJSON(post.commentURL);
+// }).then(function (comments) {
+//   // some code
+// }).catch(function (error) {
+//   // 处理前面三个Promise产生的错误
+// });
 // Promise对象的错误具有冒泡性质，会一直向后传递，直到捕获为止。
-// 
+
+// const test = {}
+// const test = function () {}
+// test.prototype.age = 100
+// const inst = new test
+// Object.defineProperty(inst, 'name', {
+//   value: 'aliao',
+//   enumerable: true
+// })
+// // delete test.name
+// console.log(Object.entries(inst), inst.age)
+
+// function test () {
+//   function inner () {
+//     console.log(this)
+//   }
+//   inner()
+// }
+// test()
