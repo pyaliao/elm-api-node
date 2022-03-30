@@ -239,3 +239,102 @@
 //   inner()
 // }
 // test()
+
+// class Point {
+//   constructor (x, y) {
+//     this.x = x
+//     this.y = y
+//   }
+
+//   toString () {
+//     return `(${this.x}, ${this.y})`
+//   }
+// }
+// const p = new Point(12, 24)
+// console.log(Object.keys(Point.prototype))
+// console.log(Object.getOwnPropertyNames(Point.prototype))
+// console.log(Object.getOwnPropertyDescriptors(Point.prototype))
+// console.log(Point.prototype.__proto__)
+// for (const key in Point.prototype) {
+//   console.log(key, Object.hasOwnProperty.call(Point.prototype, key))
+//   if (Object.hasOwnProperty.call(object, key)) {
+//   }
+// }
+// console.log(p, p.toString(), typeof Point, Point === Point.prototype.constructor, p.constructor === Point)
+
+// class Foo {
+//   constructor (x) {
+//     this.x = x
+//     // return Object.create(null)
+//     return {}
+//   }
+// }
+// const f = new Foo()
+// console.log(f instanceof Foo, f.x)
+
+// class Foo {
+//   constructor (x) {
+//     this.x = x
+//   }
+// }
+// const f = new Foo(12)
+// Object.defineProperty(f, 'x', {
+//   enumerable: true
+// })
+// // console.log(f.x, Object.hasOwnProperty.call(f, 'x'), Object.keys(f))
+// console.log(Object.getOwnPropertyNames(Object.prototype))
+
+// class TestSetter {
+//   constructor (name) {
+//     this.name = name
+//   }
+
+//   get title () {
+//     return this.name
+//   }
+
+//   set title (newValue) {
+//     this.name = newValue
+//   }
+// }
+// const test = new TestSetter('aliao')
+// const descriptor = Object.getOwnPropertyDescriptor(TestSetter.prototype, 'title')
+// console.log(descriptor, test, Object.getOwnPropertyNames(TestSetter.prototype))
+
+// class Logger {
+//   printName (name = 'aliao') {
+//     console.log(this)
+//     this.print(`Hello, ${name}`)
+//   }
+
+//   print (text) {
+//     console.log(text)
+//   }
+// }
+
+// const logger = new Logger()
+// const { printName } = logger
+// printName()
+// console.log(Logger.prototype.printName === logger.printName) // true
+
+class Logger {
+  constructor () {
+    // 其实相当于将实例的printName属性指向了一个新的函数，而Logger.prototype.printName被实例属性printName遮蔽了
+    // 实例属性直接找到，不在沿着原型链向上查找
+    this.printName = this.printName.bind(this)
+  }
+
+  printName (name = 'aliao') {
+    console.log(Object.keys(this), this, this === Logger.prototype)
+    this.print(`Hello, ${name}`)
+  }
+
+  print (text) {
+    console.log(text)
+  }
+}
+const logger = new Logger()
+const { printName } = logger
+printName()
+Logger.prototype.printName()
+console.log(Logger.prototype.printName === logger.printName) // false
