@@ -11,7 +11,7 @@ const remarkSchema = new Schema({
 const Remark = mongoose.model('Remark', remarkSchema)
 
 Remark.findOne((err, data) => {
-  if (err) return  console.log(chalk.red('查询remarks集合出错：' + err))
+  if (err) return console.log(chalk.red('查询remarks集合出错：' + err))
   if (!data) {
     Remark.create(remarkData)
   }

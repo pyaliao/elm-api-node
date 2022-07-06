@@ -22,3 +22,9 @@ pnpm-debug.log*
 *.sln
 *.sw?
 workspace.code-workspace
+
+# 图片
+.jpg
+.jpeg
+.png
+.gif
