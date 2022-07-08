@@ -1,10 +1,13 @@
 'use strict'
-
 import mongoose from 'mongoose'
+import config from 'config-lite'
 import chalk from 'chalk'
 
 // 创建连接
+// The useMongoClient option was removed in Mongoose 5, it is now always true.
 mongoose.connect('mongodb://127.0.0.1:27017/elm')
+mongoose.Promise = global.Promise
+
 const db = mongoose.connection
 
 // 监听连接失败

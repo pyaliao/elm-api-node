@@ -1,5 +1,6 @@
 import express from 'express'
 import chalk from 'chalk'
+import config from 'config-lite'
 // 路由配置文件
 import router from './routes/index.js'
 import db from './mongodb/DBConnection.js'
@@ -22,24 +23,29 @@ const app = express()
 
 // 对所有类型的http请求，以及所有请求路径进行处理的中间件
 app.all('*', (req, res, next) => {
-  console.log(req.headers)
   const { origin, Origin, referer, Referer } = req.headers
   const allowOrigin = origin || Origin || referer || Referer || '*'
   // 设置响应头
   res.header('Access-Control-Allow-Origin', allowOrigin)
-  
-
-
-
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-With')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS, DELETE')
+  res.header('Access-Control-Allow-Credentials', true)
+  res.header('X-Powered-By', 'express')
+  // 如果是预检请求，则直接返回响应，但是不带响应体
+  if (req.method === 'OPTIONS') {
+    // Sets the response HTTP status code to statusCode
+    // and sends the registered status message as the text response body.
+    res.sendStatus(200)
+  }
 
   next()
 })
 
-app.get('/', function (req, res) {
+app.get('/', function (req, res, next) {
   // console.log(req)
   res.send('hello, express, developed by aliao')
 })
-
+console.log(config)
 app.listen(3000, function () {
   console.log('server is running on localhost:3000, develop by aliao')
 })

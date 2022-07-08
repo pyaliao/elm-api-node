@@ -4,7 +4,7 @@
 
 默认情况下，XHR只能访问与发起请求的页面在同一个域内的资源，即受到浏览器同源策略的限制。
 
-CORS是为了解决跨域通信而产生的。其背后基本思路就是使用自定的HTTP头部允许浏览器和服务器互相了解，以确定请求或者响应应该成功还是失败。
+CORS是为了解决跨域通信而产生的。其背后基本思路就是使用`自定义的`HTTP头部允许浏览器和服务器互相了解，以确定请求或者响应应该成功还是失败。
 
 现代浏览器通过XMLHttpRequest对象原生支持CORS。在尝试访问不同源的资源时，这个行为会被自动触发不需要用户参与，因此对于开发者来说，跨域ajax与同源的ajax通信没有差别，代码完全一致。浏览器一旦发现ajax请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。
 
@@ -21,6 +21,7 @@ CORS是为了解决跨域通信而产生的。其背后基本思路就是使用�
   * HEAD
   * GET
   * POST
+
 (2) 除了由用户代理自动设置的标头（例如，Connection,User-Agent或Fetch 规范中定义为禁止标头名称的其他标头）外，唯一允许手动设置的标头是Fetch规范定义的标头一个 CORS-safelisted请求头，它们是：
   * Accept
   * Accept-Language
@@ -34,9 +35,9 @@ CORS是为了解决跨域通信而产生的。其背后基本思路就是使用�
 
 对于简单请求，即在满足上面量大条件的基础上，这样的请求在发送时会有一个额外的头部字段叫Origin, Origin字段包含发送请求的页面的源（协议、域名及端口），以便浏览器确定是否为其提供响应。
 
-如果Origin指定的源，不在许可范围内,服务器会返回一个正常的HTTP响应，但是响应头中没有Access-Control-Allow-Origin字段，浏览器发现响应中没有包含这个字段，就知道出错了，从而抛出一个错误，被XMLHttpRequest的onerror回调函数捕获。注意，这种错误无法通过状态码识别，因为HTTP响应的状态有可能是200。
+如果Origin指定的源，不在许可范围内,服务器会返回一个正常的HTTP响应，但是响应头中没有Access-Control-Allow-Origin字段，浏览器发现响应中没有包含这个字段，就知道出错了，从而抛出一个错误，被XMLHttpRequest的onerror回调函数捕获。注意，这种错误无法通过状态码识别，因为HTTP响应的状态码有可能是200。
 
-如果Origin指定的源在许可范围内，服务器也会返回一个HTTP响应，其相应头会多出几个字段：
+如果Origin指定的源在许可范围内，服务器也会返回一个HTTP响应，其响应头会多出几个字段：
 
 ```http
 这是一段http响应头示例
@@ -72,7 +73,7 @@ Content-Type: text/html; charset=utf-8
 
 非简单请求是那种对服务器有特殊要求的的请求，比如请求方法是PUT或DELETE，或者Content-Type字段类型是application/json等。常见的请求一般只会手动设置Content-Type字段，因此只要其值不为指定的三种类型，就成为非简单请求。
 
-CORS请求的非简单请求，会在正是通信之前，增加一次HTTP查询请求，即预检请求。
+CORS请求的非简单请求，会在正式通信之前，增加一次HTTP查询请求，即预检请求。
 
 浏览器会先询问服务器，当前网页所在的源是否在服务器的许可名单之中，以及可以使用哪些HTTP方法和头部字段。只有得到肯定的答复，浏览器才会发出正式的Ajax请求，否则就报错。
 
@@ -106,7 +107,7 @@ User-Agent: Mozilla/5.0...
 
 (2) Access-Control-Request-Headers
 
-该字段是一个都好分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是X-Custom-Header。
+该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是X-Custom-Header。
 
 ### 4.2 预检请求的响应
 
@@ -145,11 +146,11 @@ Origin https://www.1958xy.com is not allowed by Access-Control-Allow-Origin.
 
 （2）Access-Control-Allow-Headers
 
-如果浏览器请求包括Access-Control-Request-Headers字段，则Access-Control-Allow-Headers字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在"预检"中请求的字段。
+如果浏览器请求包括Access-Control-Request-Headers字段，则Access-Control-Allow-Headers字段是必需的，否则可选。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在"预检"中请求的字段。
 
 （3）Access-Control-Allow-Credentials
 
-该字段与简单请求时的含义相同。
+该字段可选。该字段与简单请求时的含义相同。
 
 （4）Access-Control-Max-Age
 
