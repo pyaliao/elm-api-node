@@ -1,4 +1,2 @@
-// import * as app from './app.js'
-// import('./app.js')
-require('@babel/core/register')
+require('@babel/register')
 require('./app.js')

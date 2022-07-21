@@ -3,9 +3,11 @@ import mongoose from 'mongoose'
 import config from 'config-lite'
 import chalk from 'chalk'
 
+const configData = config('config')
+
 // 创建连接
 // The useMongoClient option was removed in Mongoose 5, it is now always true.
-mongoose.connect('mongodb://127.0.0.1:27017/elm')
+mongoose.connect(configData.mongodbUrl)
 mongoose.Promise = global.Promise
 
 const db = mongoose.connection
@@ -24,6 +26,6 @@ db.once('open', function () {
 // 监听连接关闭
 db.on('close', function (res) {
   console.log(chalk.red('数据库断开，数据库重新连接中...'))
-  mongoose.connect('mongodb://127.0.0.1:27017/elm')
+  mongoose.connect(configData.mongodbUrl)
 })
 export default db
