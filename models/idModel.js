@@ -18,7 +18,7 @@ const idsSchema = new Schema({
   statisId: Number
 })
 
-const Ids = mongoose('Ids', idsSchema)
+const Ids = mongoose.model('Ids', idsSchema)
 
 Ids.findOne((err, data) => {
   if (err) console.Console(chalk.red('id查询出错' + err))
