@@ -5,6 +5,7 @@ import path from 'path'
 import fs from 'fs'
 import qiniu from 'qiniu'
 import gm from 'gm'
+import chalk from 'chalk'
 
 export default class BaseComponent {
   constructor () {
@@ -72,7 +73,7 @@ export default class BaseComponent {
         responseJson = await response.json()
       }
     } catch (error) {
-      console.log('数据请求失败', error)
+      console.log(chalk.red('数据请求失败'), error)
       throw new Error(error)
     }
     return responseJson
@@ -80,7 +81,7 @@ export default class BaseComponent {
 
   async getId (type) {
     if (!this.idList.includes(type)) {
-      console.log('id类型错误')
+      console.log(chalk.red('id类型错误'))
       throw new Error('id类型错误')
       return
     }
@@ -92,7 +93,7 @@ export default class BaseComponent {
       // 返回当前类型的id值
       return idData[type]
     } catch (error) {
-      console.log(`获取${type}失败`)
+      console.log(chalk.red(`获取${type}失败`))
       throw new Error(error)
     }
   }
@@ -108,7 +109,7 @@ export default class BaseComponent {
         try {
           imgId = await this.getId('imgId')
         } catch (error) {
-          console.log('获取图片id失败')
+          console.log(chalk.red('获取图片id失败'))
           fs.unlinkSync(files.file.filepath)
           reject('获取图片id失败')
         }
@@ -132,7 +133,7 @@ export default class BaseComponent {
             .resize(200, 200, '!')
             .write(repath, async (error) => {
               if (error) {
-                console.log('图片裁切失败', error)
+                console.log(chalk.red('图片裁切失败'), error)
                 reject('图片裁切失败')
                 return
               }
@@ -179,7 +180,7 @@ export default class BaseComponent {
           imgId = await this.getId('imgId')
         } catch (error) {
           fs.unlinkSync(files.file.filepath)
-          console.log('获取图片id失败')
+          console.log(chalk.red('获取图片id失败'))
           reject('获取图片id失败')
         }
         const hashName = (new Date().getTime() + Math.ceil(Math.random() * 10000)).toString(16) + imgId
@@ -191,14 +192,15 @@ export default class BaseComponent {
           // 覆盖上传除了需要简单上传所需要的信息之外，还需要想进行覆盖的文件名称，
           // 这个文件名称同时可是客户端上传代码中指定的文件名，两者必须一致，此处将上传文件名更新为新的文件名
           fs.renameSync(files.file.filepath, repath)
-          const token = this.uptoken('node-elm', key)
+          const token = this.uptoken('elm-api', key)
           const qiniuImg = await this.uploadFile(token.toString(), key, repath)
           fs.unlinkSync(repath)
           resolve(qiniuImg)
+          console.log(chalk.yellow('图片保存到七牛云成功'))
         } catch (error) {
           fs.unlinkSync(files.file.filepath)
-          console.log('保存至七牛失败')
-          reject('保存至七牛失败')
+          console.log(chalk.red('图片保存至七牛失败'))
+          reject('图片保存至七牛失败')
         }
       })
     })
@@ -217,14 +219,14 @@ export default class BaseComponent {
       // 存储支持空间创建在不同的机房，在使用 Node.js SDK 中的FormUploader和ResumeUploader上传文件之前，
       // 必须要构建一个上传用的config对象，在该对象中，可以指定空间对应的zone以及其他的一些影响上传的参数。
       const config = new qiniu.conf.Config()
-      config.zone = qiniu.zone.Zone_z0
+      config.zone = qiniu.zone.Zone_z2
       // 最简单的上传，直接上传本地文件，使用表单方式
       const formUploader = new qiniu.form_up.FormUploader(config)
       const putExtra = new qiniu.form_up.PutExtra()
       formUploader.putFile(uploadToken, key, localFile, putExtra, function (resErr, resBody, resInfo) {
         if (!resErr) {
           if (resInfo.statusCode == 200) {
-            resolve(respBody)
+            resolve(resBody)
           } else {
             console.log(resInfo.statusCode);
             console.log(resBody);
