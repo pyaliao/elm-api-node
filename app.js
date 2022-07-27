@@ -1,6 +1,6 @@
 import express from 'express'
 import chalk from 'chalk'
-import config from 'config-lite'
+import config from 'config'
 // 路由配置文件
 import router from './routes/index.js'
 import db from './mongodb/DBConnection.js'
@@ -17,9 +17,9 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 // 中间件：防止单页面应用在直接访问某个路径时，找不到页面而返回404
 import history from 'connect-history-api-fallback'
+import BaseComponent from './common/baseComponent.js'
+const baseHandler = new BaseComponent()
 
-// 获取config数据
-const configData = config('config')
 // 创建express实例
 const app = express()
 
@@ -46,13 +46,13 @@ app.all('*', (req, res, next) => {
 app.use(cookieParser())
 // session()：根据给定的参数创建一个session中间件
 app.use(session({
-  name: configData.session.name,
-  secret: configData.session.secret,
+  name: config.get('session.name'),
+  secret: config.get('session.secret'),
   resave: true,
   saveUninitialized: false,
-  cookie: configData.session.cookie,
+  cookie: config.get('session.cookie'),
   store: MongoStore.create({
-    mongoUrl: configData.mongodbUrl
+    mongoUrl: config.get('mongodbUrl')
   })
 }))
 
@@ -60,8 +60,19 @@ app.use(session({
 
 app.get('/', function (req, res, next) {
   // console.log(req)
-  res.send('hello, express, developed by aliao')
+  // res.send('hello, express, developed by aliao')
+  res.send(`
+    <h2>With <code>"express"</code> npm package</h2>
+    <form action="/addimg/food" enctype="multipart/form-data" method="post">
+      <div>Text field title: <input type="text" name="title" /></div>
+      <div>File: <input type="file" name="file" multiple="multiple" /></div>
+      <input type="submit" value="Upload" />
+    </form>
+  `);
 })
-app.listen(configData.port, function () {
+
+app.post('/addimg/:type', baseHandler.qiniu)
+
+app.listen(config.get('port'), function () {
   console.log('server is running on localhost:3000, develop by aliao')
 })

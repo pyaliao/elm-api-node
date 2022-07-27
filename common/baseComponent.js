@@ -9,18 +9,18 @@ import gm from 'gm'
 export default class BaseComponent {
   constructor () {
     this.idList = [
-      'restaurnt_id',
-      'food_id',
-      'order_id',
-      'user_id',
-      'address_id',
-      'cart_id',
-      'img_id',
-      'category-id',
-      'item-id',
-      'sku-id',
-      'admin-id',
-      'statis-id'
+      'restaurntId',
+      'foodId',
+      'orderId',
+      'userId',
+      'addressId',
+      'cartId',
+      'imgId',
+      'categoryId',
+      'itemId',
+      'skuId',
+      'adminId',
+      'statisId'
     ]
     this.imgType = [
       'shop',
@@ -97,23 +97,26 @@ export default class BaseComponent {
     }
   }
 
-  async getPath (req, res) {
+  async getPath(req, res) {
     return new Promise((resolve, reject) => {
       const form = formidable({})
-      form.upLoadDir = './public/img'
+      form.uploadDir = './public/img'
       form.parse(req, async (err, fields, files) => {
+        // 经过formidable处理后，文件被存储在服务器上某个目录下，并且filepath获取文件完整名，不过文件没有后缀
+        // newFilename是文件在服务器上的新名字且不带后缀(即经过formidable处理的)，originalFilename是文件的原始名并带有后缀
         let imgId
         try {
-          imgId = await this.getId('img_id')
+          imgId = await this.getId('imgId')
         } catch (error) {
           console.log('获取图片id失败')
-          fs.unlinkSync(files.file.path)
+          fs.unlinkSync(files.file.filepath)
           reject('获取图片id失败')
         }
         const hashName = (new Date().getTime() + Math.ceil(Math.random() * 10000)).toString(16) + imgId
-        const extName = path.extname(files.file.name)
+        const extName = path.extname(files.file.originalFilename)
+        
         if (!['.jpg', '.jpeg', '.png'].includes(extName)) {
-          fs.unlinkSync(files.file.path)
+          fs.unlinkSync(files.file.filepath)
           res.send({
             status: 0,
             type: 'ERROR_EXTNAME',
@@ -124,7 +127,7 @@ export default class BaseComponent {
         const fullName = hashName + extName
         const repath = './public/img/' + fullName
         try {
-          fs.renameSync(files.file.path, repath)
+          fs.renameSync(files.file.filepath, repath)
           gm(repath)
             .resize(200, 200, '!')
             .write(repath, async (error) => {
@@ -136,12 +139,12 @@ export default class BaseComponent {
               resolve(fullName)
             })
         } catch (error) {
+          console.log('保存图片失败', error)
           if (fs.existsSync(repath)) {
             fs.unlinkSync(repath)
           } else {
-            fs.unlinkSync(files.file.path)
+            fs.unlinkSync(files.file.filepath + extName)
           }
-          console.log('保存图片失败', error)
           reject('保存图片失败')
         }
       })
@@ -165,35 +168,35 @@ export default class BaseComponent {
       })
     }
   }
-
+  // 讲过图片保存到七牛
   async qiniu (req, type = 'default') {
     return new Promise((resolve, reject) => {
       const form = formidable({})
-      form.upLoadDir = './public/img'
+      form.uploadDir = './public/img'
       form.parse(req, async (err, fields, files) => {
         let imgId
         try {
-          imgId = await this.getId('img_id')
+          imgId = await this.getId('imgId')
         } catch (error) {
-          fs.unlinkSync(files.file.path)
+          fs.unlinkSync(files.file.filepath)
           console.log('获取图片id失败')
           reject('获取图片id失败')
         }
         const hashName = (new Date().getTime() + Math.ceil(Math.random() * 10000)).toString(16) + imgId
-        const extName = path.extname(files.file.name)
+        const extName = path.extname(files.file.originalFilename)
         const fullName = hashName + extName
         const repath = './public/img/' + fullName
         try {
           const key = fullName
           // 覆盖上传除了需要简单上传所需要的信息之外，还需要想进行覆盖的文件名称，
           // 这个文件名称同时可是客户端上传代码中指定的文件名，两者必须一致，此处将上传文件名更新为新的文件名
-          await fs.rename(files.file.path, repath)
+          fs.renameSync(files.file.filepath, repath)
           const token = this.uptoken('node-elm', key)
           const qiniuImg = await this.uploadFile(token.toString(), key, repath)
           fs.unlinkSync(repath)
           resolve(qiniuImg)
         } catch (error) {
-          fs.unlinkSync(files.file.path)
+          fs.unlinkSync(files.file.filepath)
           console.log('保存至七牛失败')
           reject('保存至七牛失败')
         }
@@ -220,11 +223,11 @@ export default class BaseComponent {
       const putExtra = new qiniu.form_up.PutExtra()
       formUploader.putFile(uploadToken, key, localFile, putExtra, function (resErr, resBody, resInfo) {
         if (!resErr) {
-          if (respInfo.statusCode == 200) {
+          if (resInfo.statusCode == 200) {
             resolve(respBody)
           } else {
-            console.log(respInfo.statusCode);
-            console.log(respBody);
+            console.log(resInfo.statusCode);
+            console.log(resBody);
           }
         } else {
           console.log('图片上传至七牛失败', resErr)
