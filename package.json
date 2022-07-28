@@ -12,6 +12,7 @@
   "author": "aliao",
   "license": "ISC",
   "dependencies": {
+    "captchapng": "0.0.1",
     "config": "^3.3.7",
     "connect-history-api-fallback": "^2.0.0",
     "connect-mongo": "^4.6.0",

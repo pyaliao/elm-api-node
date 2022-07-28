@@ -17,7 +17,11 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 // 中间件：防止单页面应用在直接访问某个路径时，找不到页面而返回404
 import history from 'connect-history-api-fallback'
+
+
+import address from './controller/address.js'
 import BaseComponent from './common/baseComponent.js'
+import captcha from './controller/captcha.js'
 const baseHandler = new BaseComponent()
 
 // 创建express实例
@@ -60,19 +64,20 @@ app.use(session({
 
 app.get('/', function (req, res, next) {
   // console.log(req)
-  // res.send('hello, express, developed by aliao')
-  res.send(`
-    <h2>With <code>"express"</code> npm package</h2>
-    <form action="/addimg/food" enctype="multipart/form-data" method="post">
-      <div>Text field title: <input type="text" name="title" /></div>
-      <div>File: <input type="file" name="file" multiple="multiple" /></div>
-      <input type="submit" value="Upload" />
-    </form>
-  `);
+  res.send('hello, express, developed by aliao')
+  // res.send(`
+  //   <h2>With <code>"express"</code> npm package</h2>
+  //   <form action="/addimg/food" enctype="multipart/form-data" method="post">
+  //     <div>Text field title: <input type="text" name="title" /></div>
+  //     <div>File: <input type="file" name="file" multiple="multiple" /></div>
+  //     <input type="submit" value="Upload" />
+  //   </form>
+  // `)
 })
 
-app.post('/addimg/:type', baseHandler.qiniu)
-
+// app.post('/addimg/:type', baseHandler.qiniu)
+// app.post('/users/:userId/addresses', address.addAddress)
+app.get('/captcha', captcha.getCaptcha)
 app.listen(config.get('port'), function () {
   console.log('server is running on localhost:3000, develop by aliao')
 })
