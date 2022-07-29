@@ -63,7 +63,7 @@ app.use(session({
 // router(app)
 
 app.get('/', function (req, res, next) {
-  // console.log(req)
+  console.log(req.headers, req.ip, req.ips, process.env.NODE_ENV)
   res.send('hello, express, developed by aliao')
   // res.send(`
   //   <h2>With <code>"express"</code> npm package</h2>

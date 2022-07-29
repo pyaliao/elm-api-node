@@ -41,6 +41,21 @@ class Cart extends from BaseComponent {
         })
         return
       }
+      let paymentApproaches
+      let cartId
+      let restaurant
+      let deliveryTime
+      let deliveryReachTime
+      let from = geoHash.split(',')[0] + ',' + geoHash.split(',')[1]
+      try {
+        paymentApproaches = await PaymentModel.find({}, '_id')
+        cartId = await this.getId('cartId')
+        restaurant = await ShopModel.findOne({ id: restaurantId })
+        const to = restaurant.latitude + ',' + restaurant.longitude
+        deliveryTime = await this.getDistance(from, to, 'timevalue')
+      } catch (error) {
+        
+      }
     })
   }
 }
