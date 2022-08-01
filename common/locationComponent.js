@@ -40,11 +40,28 @@ class LocationComponent extends BaseComponent {
         }
       }
       try {
-        const url = `https://apis.map.qq.com/ws/location/v1/ip?ip=${ip}&key=${this.tencentKey1}`
+        let url = `https://apis.map.qq.com/ws/location/v1/ip?ip=${ip}&key=${this.tencentKey1}`
         let result = await this.fetch(url)
         console.log(result)
+        if (result.json().status != 0) {
+          url = `https://apis.map.qq.com/ws/location/v1/ip?ip=${ip}&key=${this.tencentKey2}`
+          result = await this.fetch(url)
+        }
+        result = result.json()
+        if (result.status === 0) {
+          const cityInfo = {
+            lat: result.result.location.lat,
+            lng: result.result.location.lng,
+            city: result.result.ad_info.city
+          }
+          cityInfo.city = cityInfo.city.replace(new RegExp('\\u' + '市'.charCodeAt(0).toString(16), 'g'), '')
+          resolve(cityInfo)
+        } else {
+          console.log('定位失败', result)
+          reject('定位失败')
+        }
       } catch (error) {
-        
+        reject(error)
       }
     })
   }
