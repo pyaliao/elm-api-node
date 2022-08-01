@@ -18,7 +18,7 @@ import expressWinston from 'express-winston'
 // 中间件：防止单页面应用在直接访问某个路径时，找不到页面而返回404
 import history from 'connect-history-api-fallback'
 
-
+import fetch from 'node-fetch'
 import address from './controller/address.js'
 import BaseComponent from './common/baseComponent.js'
 import captcha from './controller/captcha.js'
@@ -62,8 +62,14 @@ app.use(session({
 
 // router(app)
 
-app.get('/', function (req, res, next) {
-  console.log(req.headers, req.ip, req.ips, process.env.NODE_ENV)
+app.get('/', async function (req, res, next) {
+  const result = await fetch('https://apis.map.qq.com/ws/location/v1/ip', {
+    ip: '219.145.19.178',
+    key: 'W4ZBZ-P4ZKD-QUG4H-PQPWR-U5KB2-X5BCV'
+  })
+  // const result = await fetch('https://apis.map.qq.com/ws/location/v1/ip?ip=219.145.19.178&key=W4ZBZ-P4ZKD-QUG4H-PQPWR-U5KB2-X5BCV')
+  const data = await result.json()
+  console.log(data)
   res.send('hello, express, developed by aliao')
   // res.send(`
   //   <h2>With <code>"express"</code> npm package</h2>
