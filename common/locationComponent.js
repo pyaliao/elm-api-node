@@ -1,5 +1,7 @@
 'use strict'
 
+import chalk from 'chalk'
+import { add } from 'winston'
 import BaseComponent from './baseComponent'
 
 // 腾讯WebServiceAPI 定位服务调配组件
@@ -11,11 +13,11 @@ class LocationComponent extends BaseComponent {
     this.tencentKey2 = 'OM5BZ-WVI3J-TPEF2-FFENM-SGHK7-C2BLZ'
   }
 
-  async getPosition (req) {
-    return new Promise((resolve, reject) => {
+  async getLocation (req) {
+    return new Promise(async (resolve, reject) => {
       let ip
       // 默认定位IP（西安市）
-      const defaultIp = '219.145.19.178'
+      const defaultIp = '219.145.20.171'
       if (process.env.NODE_ENV === 'development') {
         ip = defaultIp
       } else {
@@ -42,27 +44,97 @@ class LocationComponent extends BaseComponent {
       try {
         let url = `https://apis.map.qq.com/ws/location/v1/ip?ip=${ip}&key=${this.tencentKey1}`
         let result = await this.fetch(url)
-        console.log(result)
-        if (result.json().status != 0) {
+        if (result.status !== 0) {
           url = `https://apis.map.qq.com/ws/location/v1/ip?ip=${ip}&key=${this.tencentKey2}`
           result = await this.fetch(url)
         }
-        result = result.json()
         if (result.status === 0) {
           const cityInfo = {
             lat: result.result.location.lat,
             lng: result.result.location.lng,
-            city: result.result.ad_info.city
+            cityName: result.result.ad_info.city
           }
-          cityInfo.city = cityInfo.city.replace(new RegExp('\\u' + '市'.charCodeAt(0).toString(16), 'g'), '')
+          cityInfo.city = cityInfo.cityName.replace(new RegExp('\\u' + '市'.charCodeAt(0).toString(16), 'g'), '')
           resolve(cityInfo)
         } else {
           console.log('定位失败', result)
           reject('定位失败')
         }
       } catch (error) {
-        reject(error)
+        console.log(chalk.red('定位失败', error))
+        reject('定位失败')
       }
     })
   }
+
+  async searchLocation (keyword, cityName, type = 'search') {
+    try {
+      const url = `https://apis.map.qq.com/ws/place/v1/search?key=${this.tencentKey1}&keyword=${encodeURI(keyword)}&boundary=region(${cityName}, 0)`
+      const location = await this.fetch(url)
+      if (location.status === 0) {
+        return location
+      } else {
+        throw new Error('搜索位置信息失败')
+      }
+    } catch (error) {
+      console.log(chalk.red('搜索位置信息失败', error))
+      throw new Error('搜索位置信息失败')
+    }
+  }
+
+  async getDistance (from, to) {
+    try {
+      const url = `https://apis.map.qq.com/ws/distance/v1/matrix?key=${this.tencentKey1}&from=${from}&to=${to}`
+      const distance = await this.fetch(url)
+      if (distance.status === 0) {
+        const resultArr = []
+        distance.result.rows.forEach(item => {
+          item.elements.forEach(col => {
+            console.log(col)
+            const time = parseInt(col.duration) + 1200
+            // 分钟向上取整
+            let duration = Math.ceil(time % 3600 / 60) + '分钟'
+            // 小时向下取整
+            const hours = Math.floor(time / 3600)
+            if (hours) {
+              duration = hours + '小时' + duration
+            }
+            resultArr.push({
+              distance: item.elements.distance,
+              duration
+            })
+          })
+        })
+        return resultArr
+      } else {
+        throw new Error('调用腾讯地图测距失败')
+      }
+    } catch (error) {
+      console.log(chalk.red('调用腾讯地图测距失败', error))
+      throw new Error('调用腾讯地图测距失败')
+    }
+  }
+
+  // 使用腾讯地图逆地址解析api获取精确地址信息(即由经纬度到文字地址)
+  async getDetailAddress (lat, lng) {
+    try {
+      let url = `https://apis.map.qq.com/ws/geocoder/v1/?key=${this.tencentKey1}&location=${lat},${lng}`
+      let address = await this.fetch(url)
+      console.log(url, address)
+      if (address.status !== 0) {
+        url = `https://apis.map.qq.com/ws/geocoder/v1/?key=${this.tencentKey2}&location=${lat},${lng}`
+        address = await this.fetch(url)
+      }
+      if (address.status === 0) {
+        return address
+      } else {
+        throw new Error('通过经纬度获取具体位置失败')
+      }
+    } catch (error) {
+      console.log(chalk.red('通过经纬度获取具体位置失败', error))
+      throw new Error('通过经纬度获取具体位置失败')
+    }
+  }
 }
+
+export default LocationComponent

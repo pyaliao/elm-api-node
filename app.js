@@ -23,6 +23,8 @@ import address from './controller/address.js'
 import BaseComponent from './common/baseComponent.js'
 import captcha from './controller/captcha.js'
 const baseHandler = new BaseComponent()
+import LocationComponent from './common/locationComponent.js'
+
 
 // 创建express实例
 const app = express()
@@ -63,14 +65,19 @@ app.use(session({
 // router(app)
 
 app.get('/', async function (req, res, next) {
-  const result = await fetch('https://apis.map.qq.com/ws/location/v1/ip', {
-    ip: '219.145.19.178',
-    key: 'W4ZBZ-P4ZKD-QUG4H-PQPWR-U5KB2-X5BCV'
-  })
   // const result = await fetch('https://apis.map.qq.com/ws/location/v1/ip?ip=219.145.19.178&key=W4ZBZ-P4ZKD-QUG4H-PQPWR-U5KB2-X5BCV')
-  const data = await result.json()
-  console.log(data)
-  res.send('hello, express, developed by aliao')
+  // const data = await result.json()
+  // console.log(data)
+  const location = new LocationComponent()
+  const cityInfo = await location.getLocation()
+  const locationData = await location.searchLocation('大雁塔', cityInfo.cityName)
+  const from = locationData.data[0].location.lat + ',' + locationData.data[0].location.lng
+  const to = locationData.data[8].location.lat + ',' + locationData.data[8].location.lng
+  const distance = await location.getDistance(from, to)
+  await location.getDetailAddress(cityInfo.lat, cityInfo.lng)
+  console.log(cityInfo)
+  res.send(distance)
+  // res.send('hello, express, developed by aliao')
   // res.send(`
   //   <h2>With <code>"express"</code> npm package</h2>
   //   <form action="/addimg/food" enctype="multipart/form-data" method="post">
