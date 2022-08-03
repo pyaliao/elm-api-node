@@ -26,6 +26,7 @@
     "gm": "^1.23.1",
     "mongoose": "^6.2.7",
     "node-fetch": "^2.6.7",
+    "pinyin": "^3.0.0-alpha.5",
     "qiniu": "^7.7.0",
     "winston": "^3.8.1"
   },

@@ -13,6 +13,7 @@ class LocationComponent extends BaseComponent {
     this.tencentKey2 = 'OM5BZ-WVI3J-TPEF2-FFENM-SGHK7-C2BLZ'
   }
 
+  // 通过IP获取位置(城市级别)及经纬度
   async getLocation (req) {
     return new Promise(async (resolve, reject) => {
       let ip
@@ -115,7 +116,7 @@ class LocationComponent extends BaseComponent {
     }
   }
 
-  // 使用腾讯地图逆地址解析api获取精确地址信息(即由经纬度到文字地址)
+  // 使用腾讯地图逆地址解析api获取精确地址信息(即由经纬度获取用户详细地址)
   async getDetailAddress (lat, lng) {
     try {
       let url = `https://apis.map.qq.com/ws/geocoder/v1/?key=${this.tencentKey1}&location=${lat},${lng}`
