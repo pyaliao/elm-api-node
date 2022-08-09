@@ -3,11 +3,12 @@
 import CityModel from '../models/cityModel'
 import pinyin from 'pinyin'
 import LocationComponent from '../common/locationComponent'
+import chalk from 'chalk'
 
 class City extends LocationComponent {
   constructor () {
     super()
-    this.getCity = this.getCity.bind(this)
+    this.getCityInfo = this.getCityInfo.bind(this)
     this.getExactLocation = this.getExactLocation.bind(this)
     this.getDetailAddress = this.getDetailAddress.bind(this)
   }
@@ -29,7 +30,7 @@ class City extends LocationComponent {
     }
   }
 
-  async getCity (req, res, next) {
+  async getCityInfo (req, res, next) {
     const type = req.query.type
     let cityInfo
     try {
@@ -64,9 +65,23 @@ class City extends LocationComponent {
     }
   }
 
-  async getExactLocation () {}
+  async getExactLocation (req, res, next) {
+    try {
+      // 调用getLocation，通过客户端IP获取用户精确位置
+      const location = await this.getExactLocationByIp(req)
+      res.send(location)
+    } catch (error) {
+      console.log(chalk.red('获取精确位置失败', error))
+      res.send({
+        name: 'ERROR_DATA',
+        message: '获取精确位置失败'
+      })
+    }
+  }
 
-  async getDetailAddress () {}
+  async getDetailAddress (req, res, next) {
+
+  }
 }
 
 export default new City()
