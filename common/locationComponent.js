@@ -13,8 +13,8 @@ class LocationComponent extends BaseComponent {
     this.tencentKey2 = 'OM5BZ-WVI3J-TPEF2-FFENM-SGHK7-C2BLZ'
   }
 
-  // 通过IP获取位置(城市级别)及经纬度
-  async getLocation (req) {
+  // 通过IP获取用户位置(城市级别)及经纬度
+  async getLocationByIp (req) {
     return new Promise(async (resolve, reject) => {
       let ip
       // 默认定位IP（西安市）
@@ -68,6 +68,7 @@ class LocationComponent extends BaseComponent {
     })
   }
 
+  // 搜索地址
   async searchLocation (keyword, cityName, type = 'search') {
     try {
       const url = `https://apis.map.qq.com/ws/place/v1/search?key=${this.tencentKey1}&keyword=${encodeURI(keyword)}&boundary=region(${cityName}, 0)`
@@ -83,6 +84,7 @@ class LocationComponent extends BaseComponent {
     }
   }
 
+  // 计算距离
   async getDistance (from, to) {
     try {
       const url = `https://apis.map.qq.com/ws/distance/v1/matrix?key=${this.tencentKey1}&from=${from}&to=${to}`
@@ -116,8 +118,9 @@ class LocationComponent extends BaseComponent {
     }
   }
 
+  // 通过经纬度获取用户精确位置
   // 使用腾讯地图逆地址解析api获取精确地址信息(即由经纬度获取用户详细地址)
-  async getDetailAddress (lat, lng) {
+  async getExactLocationByGeo (lat, lng) {
     try {
       let url = `https://apis.map.qq.com/ws/geocoder/v1/?key=${this.tencentKey1}&location=${lat},${lng}`
       let address = await this.fetch(url)
@@ -129,11 +132,25 @@ class LocationComponent extends BaseComponent {
       if (address.status === 0) {
         return address
       } else {
-        throw new Error('通过经纬度获取具体位置失败')
+        throw new Error('通过经纬度获取用户精确位置失败')
       }
     } catch (error) {
-      console.log(chalk.red('通过经纬度获取具体位置失败', error))
+      console.log(chalk.red('通过经纬度获取用户精确位置失败', error))
       throw new Error('通过经纬度获取具体位置失败')
+    }
+  }
+
+  // 通过Ip获得用户精确位置
+  async getExactLocationByIp (req) {
+    try {
+      // 先通过Ip获取经纬度
+      let address = await this.getLocationByIp(req)
+      // 再调用getExactLocationByGeo通过经纬度获取用户精确位置
+      address = await this.getExactLocationByGeo(address.lat, address.lng)
+      return address
+    } catch (error) {
+      console.log(chalk.red('通过Ip获取用户精确位置失败', error))
+      throw new Error(error)
     }
   }
 }

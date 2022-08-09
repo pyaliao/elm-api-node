@@ -5,25 +5,17 @@ import cityData from '../initData/cities'
 const Schema = mongoose.Schema
 
 const citySchema = new Schema({
-  id: 1,
-  name: String,
-  abbr: String,
-  areaCode: String,
-  sort: Number,
-  latitude: Number,
-  longitude: Number,
-  isMap: Boolean,
-  pinyin: String
+  data: {}
 })
 
 citySchema.statics.cityGuess = async function (name) {
   // 获取城市名拼音首字母并转为大写
-  const firstWord = name.substr(0, 1).toUpperCase()
+  const firstLetter = name.substr(0, 1).toUpperCase()
   try {
     const allCities = await this.findOne()
     // Object.entries遍历对象的可迭代实例属性，不遍历原型属性
     Object.entries(allCities).forEach(item => {
-      if (item[0] === firstWord) {
+      if (item[0] === firstLetter) {
         item[1].forEach(city => {
           if (city.pinyin === name) {
             return city
@@ -77,13 +69,14 @@ citySchema.statics.getCityById = async function (id) {
   }
 }
 // 创建model
-const City = mongoose.model('City', citySchema)
+const Cities = mongoose.model('cities', citySchema)
 
-City.findOne((err, data) => {
+Cities.findOne((err, data) => {
   if (err) console.log(chalk.red('数据查询出错：' + err))
+  // console.log(chalk.green(data._id, data.__v))
   if (!data) {
-    City.create(cityData)
+    Cities.create({ data: cityData })
   }
 })
 
-export default City
+export default Cities
