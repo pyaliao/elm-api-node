@@ -18,7 +18,7 @@ class LocationComponent extends BaseComponent {
     return new Promise(async (resolve, reject) => {
       let ip
       // 默认定位IP（西安市）
-      const defaultIp = '219.145.20.171'
+      const defaultIp = '111.19.92.45'
       if (process.env.NODE_ENV === 'development') {
         ip = defaultIp
       } else {
