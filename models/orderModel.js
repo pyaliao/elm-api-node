@@ -82,7 +82,7 @@ const orderSchema = new Schema({
   addressId: Number
 })
 
-orderSchema.index({ id: i })
+orderSchema.index({ id: 1 })
 
 const Order = mongoose.model('Order', orderSchema)
 
