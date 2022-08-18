@@ -21,7 +21,7 @@ const idsSchema = new Schema({
 const Ids = mongoose.model('Ids', idsSchema)
 
 Ids.findOne((err, data) => {
-  if (err) console.Console(chalk.red('id查询出错' + err))
+  if (err) console.log(chalk.red('id查询出错' + err))
   if (!data) {
     // 创建一个model的实例
     const newIds = new Ids({
