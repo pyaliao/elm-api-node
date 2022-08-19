@@ -29,27 +29,6 @@ const baseHandler = new BaseComponent()
 // 创建express实例
 const app = express()
 
-// 初始化数据库
-// import ActivityModel from './models/activityModel'
-// import AddressModel from './models/addressModel'
-// import AdminModel from './models/adminModel'
-// import CartModel from './models/cartModel'
-// import CategoryModel from './models/categoryModel'
-// import DeliveryModel from './models/deliveryModel'
-// import EntryModel from './models/entryModel'
-// import ExplainModel from './models/explainModel'
-// import FoodModel from './models/foodModel'
-// import HongbaoModel from './models/hongbaoModel'
-// import IdModel from './models/idModel'
-// import OrderModel from './models/orderModel'
-// import PaymentModel from './models/paymentModel'
-// import rateModel from './models/rateModel'
-// import RemarkModel from './models/remarkModel'
-// import ShopModel from './models/shopModel'
-// import StatisticModel from './models/statisticModel'
-// import UserInfoModel from './models/userInfoModel'
-// import UserModel from './models/userModel'
-
 // 对所有类型的http请求，以及所有请求路径进行处理的中间件
 app.all('*', (req, res, next) => {
   const { origin, Origin, referer, Referer } = req.headers
@@ -81,6 +60,19 @@ app.use(session({
   store: MongoStore.create({
     mongoUrl: config.get('mongodbUrl')
   })
+}))
+
+app.use(expressWinston.logger({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize()
+      )
+    }),
+    new winston.transports.File({
+      filename: 'logs/normal.log'
+    })
+  ]
 }))
 
 // router(app)
@@ -115,7 +107,20 @@ app.get('/', async function (req, res, next) {
 // app.post('/addimg/:type', baseHandler.qiniu)
 // app.post('/users/:userId/addresses', address.addAddress)
 app.get('/captcha', captcha.getCaptcha)
-console.log(config.get('port'))
+
+app.use(expressWinston.errorLogger({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize()
+      )
+    }),
+    new winston.transports.File({
+      level: 'error',
+      filename: 'logs/error.log'
+    })
+  ]
+}))
 app.listen(config.get('port'), function () {
-  console.log('server is running on localhost:3000, develop by aliao')
+  console.log(`server is running on localhost:${config.get('port')}, develop by aliao`)
 })
