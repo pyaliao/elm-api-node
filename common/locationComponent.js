@@ -1,7 +1,6 @@
 'use strict'
 
 import chalk from 'chalk'
-import { add } from 'winston'
 import BaseComponent from './baseComponent'
 
 // 腾讯WebServiceAPI 定位服务调配组件
@@ -13,12 +12,13 @@ class LocationComponent extends BaseComponent {
     this.tencentKey2 = 'OM5BZ-WVI3J-TPEF2-FFENM-SGHK7-C2BLZ'
   }
 
+  // IP定位服务精确到市级，该位置为IP地址所属的行政区划政府坐标
   // 通过IP获取用户位置(城市级别)及经纬度
   async getLocationByIp (req) {
     return new Promise(async (resolve, reject) => {
       let ip
       // 默认定位IP（西安市）
-      const defaultIp = '111.19.92.45'
+      const defaultIp = '219.145.19.152'
       if (process.env.NODE_ENV === 'development') {
         ip = defaultIp
       } else {

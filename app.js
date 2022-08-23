@@ -12,7 +12,7 @@ import session from 'express-session'
 // connect-mongo：是一个使用typescript为connect和express库编写的一个进行session存储的库
 import MongoStore from 'connect-mongo'
 // 中间件：winston，一个多路传输的日志记录库
-import winston from 'winston'
+import winston, { add } from 'winston'
 // express-winston：一个中间件，在express应用中提供请求及错误的日志记录给你
 import expressWinston from 'express-winston'
 // 中间件：防止单页面应用在直接访问某个路径时，找不到页面而返回404
@@ -78,9 +78,12 @@ app.use(expressWinston.logger({
 // router(app)
 
 app.get('/', async function (req, res, next) {
-  const pinyinName = await city.getCityName(req)
-  console.log(chalk.green(pinyinName))
-  res.send(pinyinName)
+  const address = await city.getDetailAddress(req, res, next)
+  console.log(chalk.green(address))
+  res.send(address)
+  // const pinyinName = await city.getCityName(req)
+  // console.log(chalk.green(pinyinName))
+  // res.send(pinyinName)
   // const result = await fetch('https://apis.map.qq.com/ws/location/v1/ip?ip=219.145.19.178&key=W4ZBZ-P4ZKD-QUG4H-PQPWR-U5KB2-X5BCV')
   // const data = await result.json()
   // console.log(data)
@@ -103,7 +106,8 @@ app.get('/', async function (req, res, next) {
   //   </form>
   // `)
 })
-
+app.get('/loc', city.getExactLocation)
+app.get('/loc/:geoHash', city.getDetailAddress)
 // app.post('/addimg/:type', baseHandler.qiniu)
 // app.post('/users/:userId/addresses', address.addAddress)
 app.get('/captcha', captcha.getCaptcha)
