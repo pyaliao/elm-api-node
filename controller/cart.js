@@ -6,7 +6,7 @@ import ShopModel from '../models/shopModel'
 import CartModel from '../models/cartModel'
 import formidable from 'formidable'
 
-class Cart extends from BaseComponent {
+class Cart extends BaseComponent {
   constructor () {
     super()
     this.extra = [{

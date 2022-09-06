@@ -4,6 +4,7 @@ import CityModel from '../models/cityModel'
 import pinyin from 'pinyin'
 import LocationComponent from '../common/locationComponent'
 import chalk from 'chalk'
+import { add } from 'winston'
 
 class City extends LocationComponent {
   constructor () {
@@ -13,10 +14,12 @@ class City extends LocationComponent {
     this.getDetailAddress = this.getDetailAddress.bind(this)
   }
 
+  // 调用getLocationByIp获取城市名及经纬度
+  // 然后将城市名转为拼音表示
   async getCityName (req) {
     try {
-      // 调用getLocation用ip获取城市名及经纬度信息
-      const cityInfo = await this.getLocation(req)
+      // 调用getLocationByIp用ip获取城市名及经纬度信息
+      const cityInfo = await this.getLocationByIp(req)
       // 然后将城市名转换为拼音
       let cityNamePinyin = ''
       pinyin(cityInfo.cityName, {
@@ -30,6 +33,7 @@ class City extends LocationComponent {
     }
   }
 
+  // 根据城市的拼音表示获取城市基本信息
   async getCityInfo (req, res, next) {
     const type = req.query.type
     let cityInfo
@@ -65,6 +69,7 @@ class City extends LocationComponent {
     }
   }
 
+  // 调用getExactLocationByIp获取用户精确位置
   async getExactLocation (req, res, next) {
     try {
       // 调用getLocation，通过客户端IP获取用户精确位置
@@ -79,8 +84,38 @@ class City extends LocationComponent {
     }
   }
 
+  // 调用getExactLocationByGeo获取用户详细地址
   async getDetailAddress (req, res, next) {
-
+    try {
+      const geoHash = req.params.geoHash || ''
+      if (geoHash.indexOf(',') === -1) {
+        res.send({
+          status: 0,
+          type: 'ERROR_PARAMS',
+          message: '参数错误'
+        })
+        return
+      }
+      const geoArr = geoHash.split(',')
+      // 调用getExactLocationByGeo获取精确地址
+      const result = await this.getExactLocationByGeo(geoArr[0], geoArr[1])
+      const address = {
+        address: result.result.address,
+        city: result.result.address_component.city,
+        geoHash,
+        lat: geoArr[0],
+        lng: geoArr[1],
+        name: result.result.formatted_addresses.recommend
+      }
+      res.send(address)
+    } catch (error) {
+      console.log(chalk.red('getExactLocationByGeo调用失败: ', error))
+      res.send({
+        status: 0,
+        type: 'ERROR_DATA',
+        message: '获取数据失败'
+      })
+    }
   }
 }
 

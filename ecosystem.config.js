@@ -2,16 +2,13 @@ module.exports = {
   apps: [
     {
       name: 'elm-api',
-      script: 'index.js',
+      script: 'app.js',
       watch: '.',
-      env: {
-        NODE_ENV: 'development',
-        PORT: '3000'
+      env_development: {
+        NODE_ENV: 'development'
       },
       env_production: {
-        NODE_ENV: 'production',
-        HOST: '0.0.0.0',
-        PORT: '8001'
+        NODE_ENV: 'production'
       }
     }
   ],

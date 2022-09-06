@@ -12,11 +12,13 @@ import session from 'express-session'
 // connect-mongo：是一个使用typescript为connect和express库编写的一个进行session存储的库
 import MongoStore from 'connect-mongo'
 // 中间件：winston，一个多路传输的日志记录库
-import winston from 'winston'
+import winston, { add } from 'winston'
 // express-winston：一个中间件，在express应用中提供请求及错误的日志记录给你
 import expressWinston from 'express-winston'
 // 中间件：防止单页面应用在直接访问某个路径时，找不到页面而返回404
 import history from 'connect-history-api-fallback'
+
+import fs, { fdatasync } from 'fs'
 
 import fetch from 'node-fetch'
 import address from './controller/address.js'
@@ -28,27 +30,6 @@ import CityModel from './models/cityModel.js'
 const baseHandler = new BaseComponent()
 // 创建express实例
 const app = express()
-
-// 初始化数据库
-// import ActivityModel from './models/activityModel'
-// import AddressModel from './models/addressModel'
-// import AdminModel from './models/adminModel'
-// import CartModel from './models/cartModel'
-// import CategoryModel from './models/categoryModel'
-// import DeliveryModel from './models/deliveryModel'
-// import EntryModel from './models/entryModel'
-// import ExplainModel from './models/explainModel'
-// import FoodModel from './models/foodModel'
-// import HongbaoModel from './models/hongbaoModel'
-// import IdModel from './models/idModel'
-// import OrderModel from './models/orderModel'
-// import PaymentModel from './models/paymentModel'
-// import rateModel from './models/rateModel'
-// import RemarkModel from './models/remarkModel'
-// import ShopModel from './models/shopModel'
-// import StatisticModel from './models/statisticModel'
-// import UserInfoModel from './models/userInfoModel'
-// import UserModel from './models/userModel'
 
 // 对所有类型的http请求，以及所有请求路径进行处理的中间件
 app.all('*', (req, res, next) => {
@@ -83,12 +64,35 @@ app.use(session({
   })
 }))
 
-// router(app)
+app.use(expressWinston.logger({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize()
+      )
+    }),
+    new winston.transports.File({
+      filename: 'logs/normal.log'
+    })
+  ]
+}))
 
+// router(app)
+app.get('/favicon.ico', (req, res, next) => {
+  fs.readFileSync('./favicon.ico', (err, data) => {
+    if (!err) {
+      res.writeHead(200, { 'Content-type': 'image/x-icon' })
+      res.send(data)
+    }
+  })
+})
 app.get('/', async function (req, res, next) {
-  const pinyinName = await city.getExactLocation(req,res,next)
-  console.log(chalk.green(pinyinName))
-  res.send(pinyinName)
+  const address = await city.getExactLocation(req, res, next)
+  console.log(chalk.green(address))
+  res.send(address)
+  // const pinyinName = await city.getCityName(req)
+  // console.log(chalk.green(pinyinName))
+  // res.send(pinyinName)
   // const result = await fetch('https://apis.map.qq.com/ws/location/v1/ip?ip=219.145.19.178&key=W4ZBZ-P4ZKD-QUG4H-PQPWR-U5KB2-X5BCV')
   // const data = await result.json()
   // console.log(data)
@@ -112,10 +116,25 @@ app.get('/', async function (req, res, next) {
   // `)
 })
 
+app.get('/loc', city.getExactLocation)
+app.get('/loc/:geoHash', city.getDetailAddress)
 // app.post('/addimg/:type', baseHandler.qiniu)
 // app.post('/users/:userId/addresses', address.addAddress)
 app.get('/captcha', captcha.getCaptcha)
-console.log(config.get('port'))
+
+app.use(expressWinston.errorLogger({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize()
+      )
+    }),
+    new winston.transports.File({
+      level: 'error',
+      filename: 'logs/error.log'
+    })
+  ]
+}))
 app.listen(config.get('port'), function () {
-  console.log('server is running on localhost:3000, develop by aliao')
+  console.log(`server is running on localhost:${config.get('port')}, develop by aliao`)
 })
