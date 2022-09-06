@@ -86,7 +86,7 @@ app.use(session({
 // router(app)
 
 app.get('/', async function (req, res, next) {
-  const pinyinName = await city.getCityName(req)
+  const pinyinName = await city.getExactLocation(req,res,next)
   console.log(chalk.green(pinyinName))
   res.send(pinyinName)
   // const result = await fetch('https://apis.map.qq.com/ws/location/v1/ip?ip=219.145.19.178&key=W4ZBZ-P4ZKD-QUG4H-PQPWR-U5KB2-X5BCV')

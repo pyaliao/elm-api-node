@@ -12,6 +12,7 @@
   "author": "aliao",
   "license": "ISC",
   "dependencies": {
+    "@node-rs/jieba": "^1.6.1",
     "captchapng": "0.0.1",
     "config": "^3.3.7",
     "connect-history-api-fallback": "^2.0.0",
@@ -24,6 +25,7 @@
     "express-winston": "^4.2.0",
     "formidable": "^2.0.1",
     "gm": "^1.23.1",
+    "jieba": "^1.0.0",
     "mongoose": "^6.2.7",
     "node-fetch": "^2.6.7",
     "pinyin": "^3.0.0-alpha.5",
