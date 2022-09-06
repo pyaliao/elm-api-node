@@ -18,6 +18,8 @@ import expressWinston from 'express-winston'
 // 中间件：防止单页面应用在直接访问某个路径时，找不到页面而返回404
 import history from 'connect-history-api-fallback'
 
+import fs, { fdatasync } from 'fs'
+
 import fetch from 'node-fetch'
 import address from './controller/address.js'
 import BaseComponent from './common/baseComponent.js'
@@ -76,9 +78,16 @@ app.use(expressWinston.logger({
 }))
 
 // router(app)
-
+app.get('/favicon.ico', (req, res, next) => {
+  fs.readFileSync('./favicon.ico', (err, data) => {
+    if (!err) {
+      res.writeHead(200, { 'Content-type': 'image/x-icon' })
+      res.send(data)
+    }
+  })
+})
 app.get('/', async function (req, res, next) {
-  const address = await city.getDetailAddress(req, res, next)
+  const address = await city.getExactLocation(req, res, next)
   console.log(chalk.green(address))
   res.send(address)
   // const pinyinName = await city.getCityName(req)
@@ -106,6 +115,7 @@ app.get('/', async function (req, res, next) {
   //   </form>
   // `)
 })
+
 app.get('/loc', city.getExactLocation)
 app.get('/loc/:geoHash', city.getDetailAddress)
 // app.post('/addimg/:type', baseHandler.qiniu)
