@@ -23,9 +23,11 @@ class LocationComponent extends BaseComponent {
         ip = defaultIp
       } else {
         ip = req.ip
+	console.log(chalk.green(ip))
         if (ip) {
           if (ip === '::1') {
-            ip = '127.0.0.1'
+            //ip = '127.0.0.1'
+            ip = defaultIp
           } else {
             // 如果正则表达式有g标志，则返回与完整正则表达式匹配的所有结果，但不会返回捕获组:
             // [ '127.0.0.1' ] 一个或者多个匹配值组成的数组，没有匹配值则返回null
@@ -36,7 +38,7 @@ class LocationComponent extends BaseComponent {
             // index: 匹配的结果的开始位置
             // input: 搜索的字符串。
             // 默认的捕获组的值：只要捕获组存在（无论是默认还是命名捕获组），就会有默认捕获组的值存在
-            ip = ip.match(/\d{1, 3}\.\d{1, 3}\.\d{1, 3}\.\d{1, 3}/g)[0]
+            ip = ip.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g)[0]
           }
         } else {
           ip = defaultIp
