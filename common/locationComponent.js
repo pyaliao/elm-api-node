@@ -23,10 +23,9 @@ class LocationComponent extends BaseComponent {
         ip = defaultIp
       } else {
         ip = req.ip
-        console.log(ip)
         if (ip) {
           if (ip === '::1') {
-            // ip = '127.0.0.1'
+            //ip = '127.0.0.1'
             ip = defaultIp
           } else {
             // 如果正则表达式有g标志，则返回与完整正则表达式匹配的所有结果，但不会返回捕获组:
