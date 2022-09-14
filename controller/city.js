@@ -4,7 +4,6 @@ import CityModel from '../models/cityModel'
 import pinyin from 'pinyin'
 import LocationComponent from '../common/locationComponent'
 import chalk from 'chalk'
-import { add } from 'winston'
 
 class City extends LocationComponent {
   constructor () {
