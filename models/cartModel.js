@@ -53,7 +53,7 @@ const cartSchema = new Schema({
     phone: String,
     promiseDeliveryTime: { type: Number, default: 0 },
     restaurantId: Number,
-    restaurantInfo: String,
+    restaurantInfo: Schema.Types.Mixed,
     restaurantMinimumOrderCount: Number,
     restaurantNameForUrl: String,
     restaurantStatus: { type: Number, default: 1 },
