@@ -7,7 +7,7 @@ import chalk from 'chalk'
 
 // 自定义模块
 import BaseComponent from '../common/baseComponent'
-import OrderModels from '../models/orderModel'
+import OrderModel from '../models/orderModel'
 import CartModel from '../models/cartModel'
 import AddressModel from '../models/addressModel'
 
@@ -99,7 +99,7 @@ class Order extends BaseComponent {
       }
       try {
         // 将订单数据存储到数据库
-        await OrderModels.create(orderData)
+        await OrderModel.create(orderData)
         res.send({
           status: 0,
           success: '下单成功，请及时付款',
@@ -138,7 +138,7 @@ class Order extends BaseComponent {
       return
     }
     try {
-      let orders = await OrderModels.find({ userId }).sort({ id: -1 }).limit(Number(limit)).skip(Number(offset))
+      let orders = await OrderModel.find({ userId }).sort({ id: -1 }).limit(Number(limit)).skip(Number(offset))
       const now = new Date().getTime()
       // map返回一个新数组，但是不会改变原数组，新数组每个元素是回调函数返回值
       orders = orders.map(item => {
@@ -185,7 +185,7 @@ class Order extends BaseComponent {
     try {
       // findOne返回第一个找到的document
       // 此处按_id自动倒序排序并返回第一个找到的document
-      const order = await OrderModels.findOne({ id: orderId }, '-_id')
+      const order = await OrderModel.findOne({ id: orderId }, '-_id')
       const addressInfo = await AddressModel.findOne({ id: order.addressId })
       const orderDetail = {
         ...order,
@@ -216,7 +216,7 @@ class Order extends BaseComponent {
       }
       // 如果restaurantId存在，就查询restaurantId对应餐馆的所有订单
       // 如果restaurantId不存在，就查询所有的订单
-      let allOrders = await OrderModels.find(filter)
+      let allOrders = await OrderModel.find(filter)
       const now = new Date().getTime()
       allOrders = allOrders.map(item => {
         if (now - item.orderTime < 900000) {
@@ -247,7 +247,7 @@ class Order extends BaseComponent {
       if (restaurantId && Number(restaurantId)) {
         filter = { restaurantId }
       }
-      const count = OrderModels.find(filter).count()
+      const count = OrderModel.find(filter).count()
       res.send({
         status: 1,
         count

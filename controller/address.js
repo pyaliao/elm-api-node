@@ -1,9 +1,10 @@
 'use strict'
 
-import BaseComponent from '../common/baseComponent'
-import AddressModel from '../models/addressModel'
 import formidable from 'formidable'
 import chalk from 'chalk'
+
+import BaseComponent from '../common/baseComponent'
+import AddressModel from '../models/addressModel'
 
 // 继承BaseComponent类
 class Address extends BaseComponent {

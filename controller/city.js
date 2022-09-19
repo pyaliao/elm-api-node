@@ -1,9 +1,10 @@
 'use strict'
 
-import CityModel from '../models/cityModel'
 import pinyin from 'pinyin'
-import LocationComponent from '../common/locationComponent'
 import chalk from 'chalk'
+
+import CityModel from '../models/cityModel'
+import LocationComponent from '../common/locationComponent'
 
 class City extends LocationComponent {
   constructor () {

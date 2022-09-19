@@ -1,10 +1,11 @@
 'use strict'
 
+import formidable from 'formidable'
+
 import BaseComponent from '../common/baseComponent'
 import PaymentModel from '../models/paymentModel'
 import ShopModel from '../models/shopModel'
 import CartModel from '../models/cartModel'
-import formidable from 'formidable'
 
 class Cart extends BaseComponent {
   constructor () {
