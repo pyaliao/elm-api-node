@@ -57,3 +57,5 @@ class SearchPlace extends LocationComponent {
     }
   }
 }
+
+export default new SearchPlace()
