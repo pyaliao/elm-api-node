@@ -2,7 +2,6 @@ import express from 'express'
 import chalk from 'chalk'
 import config from 'config'
 // 路由配置文件
-import router from './routes/index.js'
 import db from './mongodb/DBConnection.js'
 // cookie-parser：一个cookie解析中间件
 import cookieParser from 'cookie-parser'
@@ -12,13 +11,12 @@ import session from 'express-session'
 // connect-mongo：是一个使用typescript为connect和express库编写的一个进行session存储的库
 import MongoStore from 'connect-mongo'
 // 中间件：winston，一个多路传输的日志记录库
-import winston, { add } from 'winston'
+import winston from 'winston'
 // express-winston：一个中间件，在express应用中提供请求及错误的日志记录给你
 import expressWinston from 'express-winston'
 // 中间件：防止单页面应用在直接访问某个路径时，找不到页面而返回404
 import history from 'connect-history-api-fallback'
-
-import fs, { fdatasync } from 'fs'
+import fs from 'fs'
 
 import fetch from 'node-fetch'
 import address from './controller/address.js'
@@ -26,10 +24,12 @@ import BaseComponent from './common/baseComponent.js'
 import captcha from './controller/captcha.js'
 import LocationComponent from './common/locationComponent.js'
 import city from './controller/city'
-import CityModel from './models/cityModel.js'
+import searchPlace from './controller/searchPlace'
+
 const baseHandler = new BaseComponent()
 // 创建express实例
 const app = express()
+const router = express.Router()
 
 // 对所有类型的http请求，以及所有请求路径进行处理的中间件
 app.all('*', (req, res, next) => {
@@ -86,10 +86,10 @@ app.get('/favicon.ico', (req, res, next) => {
     }
   })
 })
-app.get('/', async function (req, res, next) {
-  const address = await city.getExactLocation(req, res, next)
-  console.log(chalk.green(address))
-  res.send(address)
+// app.get('/', async function (req, res, next) {
+  // const address = await city.getExactLocation(req, res, next)
+  // console.log(chalk.green(address))
+  // res.send(address)
   // const pinyinName = await city.getCityName(req)
   // console.log(chalk.green(pinyinName))
   // res.send(pinyinName)
@@ -114,13 +114,13 @@ app.get('/', async function (req, res, next) {
   //     <input type="submit" value="Upload" />
   //   </form>
   // `)
-})
-
-app.get('/loc', city.getExactLocation)
-app.get('/loc/:geoHash', city.getDetailAddress)
+// })
+app.get('/loc/search', searchPlace.search)
+// app.get('/loc', city.getExactLocation)
+// app.get('/loc/:geoHash', city.getDetailAddress)
 // app.post('/addimg/:type', baseHandler.qiniu)
 // app.post('/users/:userId/addresses', address.addAddress)
-app.get('/captcha', captcha.getCaptcha)
+// app.get('/captcha', captcha.getCaptcha)
 
 app.use(expressWinston.errorLogger({
   transports: [

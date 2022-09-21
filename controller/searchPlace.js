@@ -16,7 +16,7 @@ class SearchPlace extends LocationComponent {
     if (!keyword) {
       res.send({
         status: 0,
-        type: 'ERROR_QUERY_keyword',
+        type: 'ERROR_QUERY_KEYWORD',
         message: 'keyword参数错误'
       })
     } else if (isNaN(cityId)) {
@@ -35,10 +35,12 @@ class SearchPlace extends LocationComponent {
       }
     }
     try {
+      // console.log(chalk.yellow(req.query.keyword, req.query.cityId, req.query.type))
       const cityInfo = await CityModel.getCityById(cityId)
+      console.log(chalk.yellow(cityInfo))
       const resLocation = await this.searchLocation(keyword, cityInfo.name, type)
       const locationList = []
-      resLocation.data.map((item) => {
+      resLocation.data.forEach((item) => {
         locationList.push({
           name: item.title,
           address: item.address,
@@ -49,6 +51,7 @@ class SearchPlace extends LocationComponent {
       })
       res.send(locationList)
     } catch (error) {
+      console.log(chalk.red(error))
       res.send({
         status: 0,
         type: 'ERROR_SEARCH_ADDRESS',
