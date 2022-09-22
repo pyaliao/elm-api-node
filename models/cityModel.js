@@ -64,7 +64,9 @@ citySchema.statics.getCityById = async function (id) {
       Object.entries(cities.data).forEach(item => {
         if (item[0] !== '_id' && item[0] !== 'hotCities') {
           item[1].forEach(city => {
-            if (id === city.id) {
+            // 此处记得转换，id传入的是字符串类型，数据库查询得到的city.id是数值类型
+            if (Number(id) === city.id) {
+              console.log(chalk.yellow(city))
               resolve(city)
             }
           })

@@ -35,9 +35,8 @@ class SearchPlace extends LocationComponent {
       }
     }
     try {
-      // console.log(chalk.yellow(req.query.keyword, req.query.cityId, req.query.type))
+      console.log(chalk.yellow(req.query.keyword, typeof req.query.cityId, req.query.type))
       const cityInfo = await CityModel.getCityById(cityId)
-      console.log(chalk.yellow(cityInfo))
       const resLocation = await this.searchLocation(keyword, cityInfo.name, type)
       const locationList = []
       resLocation.data.forEach((item) => {
