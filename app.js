@@ -19,12 +19,15 @@ import history from 'connect-history-api-fallback'
 import fs from 'fs'
 
 import fetch from 'node-fetch'
-import address from './controller/address.js'
-import BaseComponent from './common/baseComponent.js'
-import captcha from './controller/captcha.js'
-import LocationComponent from './common/locationComponent.js'
+import address from './controller/address'
+import BaseComponent from './common/baseComponent'
+import captcha from './controller/captcha'
+import LocationComponent from './common/locationComponent'
 import city from './controller/city'
 import searchPlace from './controller/searchPlace'
+import remark from './controller/remark'
+import entry from './controller/entry'
+import explain from './controller/explain'
 
 const baseHandler = new BaseComponent()
 // 创建express实例
@@ -77,7 +80,6 @@ app.use(expressWinston.logger({
   ]
 }))
 
-// router(app)
 app.get('/favicon.ico', (req, res, next) => {
   fs.readFileSync('./favicon.ico', (err, data) => {
     if (!err) {
@@ -115,7 +117,10 @@ app.get('/favicon.ico', (req, res, next) => {
   //   </form>
   // `)
 // })
-app.get('/loc/search', searchPlace.search)
+app.get('/carts/:cartId/remarks', remark.getRemarks)
+app.get('/index/entry', entry.getEntry)
+app.get('/explain', explain.getExplain)
+// app.get('/loc/search', searchPlace.search)
 // app.get('/loc', city.getExactLocation)
 // app.get('/loc/:geoHash', city.getDetailAddress)
 // app.post('/addimg/:type', baseHandler.qiniu)
