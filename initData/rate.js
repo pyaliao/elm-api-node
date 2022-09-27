@@ -1,4 +1,4 @@
-export const ratingList = [
+export const ratings = [
   {
     "avatar": "",
     "highlights": [],

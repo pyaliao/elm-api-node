@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { ratingList, scores, tags} from '../initData/rate.js'
+import { ratingList, scores, tags } from '../initData/rate.js'
 import chalk from 'chalk'
 
 // 保存Schema构造函数
